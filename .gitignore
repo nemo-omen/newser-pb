@@ -1,0 +1,6 @@
+pb_data
+.env
+node_modules
+.svelte-kit
+.tmp
+tmp
