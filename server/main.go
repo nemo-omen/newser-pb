@@ -9,6 +9,7 @@ import (
 
 	"github.com/pocketbase/pocketbase"
 	"github.com/pocketbase/pocketbase/core"
+	"github.com/pocketbase/pocketbase/daos"
 	"github.com/pocketbase/pocketbase/models"
 	"github.com/pocketbase/pocketbase/plugins/migratecmd"
 	// uncomment once you have at least one .go migration file in the "migrations" directory
@@ -51,23 +52,25 @@ func createUserCollections(app *pocketbase.PocketBase, user models.Model) error 
 		return err
 	}
 
-	readRecord := models.NewRecord(collection)
-	savedRecord := models.NewRecord(collection)
+	return app.Dao().RunInTransaction(func(txDao *daos.Dao) error {
+		readRecord := models.NewRecord(collection)
+		savedRecord := models.NewRecord(collection)
 
-	readRecord.Set("user", user.GetId())
-	savedRecord.Set("user", user.GetId())
-	readRecord.Set("title", "read")
-	savedRecord.Set("title", "saved")
+		readRecord.Set("user", user.GetId())
+		savedRecord.Set("user", user.GetId())
+		readRecord.Set("title", "read")
+		savedRecord.Set("title", "saved")
 
-	if err := app.Dao().SaveRecord(readRecord); err != nil {
-		return err
-	}
+		if err := app.Dao().SaveRecord(readRecord); err != nil {
+			return err
+		}
 
-	if err := app.Dao().SaveRecord(savedRecord); err != nil {
-		return err
-	}
+		if err := app.Dao().SaveRecord(savedRecord); err != nil {
+			return err
+		}
 
-	return nil
+		return nil
+	})
 }
 
 func routes(app *pocketbase.PocketBase) {

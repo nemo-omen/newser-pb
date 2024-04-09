@@ -31,7 +31,7 @@
 		<nav aria-label="Main">
 			<ul>
 				{#if current.startsWith('/app')}
-					<UserDropdown email={user.email} />
+					<UserDropdown email={user.email} userName={user.name} userId={user.id} />
 				{:else}
 					<li>
 						<a href="/auth/login">Log In</a>
