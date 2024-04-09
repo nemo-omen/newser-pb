@@ -9,6 +9,7 @@ import (
 
 	"github.com/pocketbase/pocketbase"
 	"github.com/pocketbase/pocketbase/core"
+	"github.com/pocketbase/pocketbase/models"
 	"github.com/pocketbase/pocketbase/plugins/migratecmd"
 	// uncomment once you have at least one .go migration file in the "migrations" directory
 	// _ "yourpackage/migrations"
@@ -30,12 +31,43 @@ func main() {
 		Automigrate: isGoRun,
 	})
 
+	app.OnModelAfterCreate("users").Add(func(e *core.ModelEvent) error {
+		log.Printf("User created: %v", e.Model)
+		createUserCollections(app, e.Model)
+		return nil
+	})
+
 	registerHandlers(app)
 	routes(app)
 
 	if err := app.Start(); err != nil {
 		log.Fatal(err)
 	}
+}
+
+func createUserCollections(app *pocketbase.PocketBase, user models.Model) error {
+	collection, err := app.Dao().FindCollectionByNameOrId("collections")
+	if err != nil {
+		return err
+	}
+
+	readRecord := models.NewRecord(collection)
+	savedRecord := models.NewRecord(collection)
+
+	readRecord.Set("user", user.GetId())
+	savedRecord.Set("user", user.GetId())
+	readRecord.Set("title", "read")
+	savedRecord.Set("title", "saved")
+
+	if err := app.Dao().SaveRecord(readRecord); err != nil {
+		return err
+	}
+
+	if err := app.Dao().SaveRecord(savedRecord); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func routes(app *pocketbase.PocketBase) {
