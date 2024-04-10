@@ -1,53 +1,6 @@
 package types
 
-type Person struct {
-	Name  string `json:"name" db:"name"`
-	Email string `json:"email" db:"email"`
-}
-
-type Image struct {
-	Url   string `json:"url" db:"url"`
-	Title string `json:"title" db:"title"`
-}
-
-type Category struct {
-	Term string `json:"term" db:"term"`
-}
-
-type Collection struct {
-	User  string `json:"user" db:"user"`
-	Title string `json:"title" db:"title"`
-}
-
-type Article struct {
-	Title       string      `json:"title" db:"title"`
-	Description string      `json:"description" db:"description"`
-	Content     string      `json:"content" db:"content"`
-	Link        string      `json:"link" db:"link"`
-	SiteLink    string      `json:"site_link" db:"site_link"`
-	UpdatedAt   string      `json:"updated_at" db:"updated_at"`
-	PublishedAt string      `json:"published_at" db:"published_at"`
-	GUID        string      `json:"guid" db:"guid"`
-	Authors     []*Person   `json:"authors" db:"authors"`
-	Image       *Image      `json:"image" db:"image"`
-	Categories  []*Category `json:"categories" db:"categories"`
-}
-
-type Newsfeed struct {
-	Title       string      `json:"title" db:"title"`
-	Description string      `json:"description" db:"description"`
-	FeedLink    string      `json:"feed_link" db:"feed_link"`
-	SiteLink    string      `json:"site_link" db:"site_link"`
-	UpdatedAt   string      `json:"updated_at" db:"updated_at"`
-	PublishedAt string      `json:"published_at" db:"published_at"`
-	Authors     []*Person   `json:"authors" db:"authors"`
-	Language    string      `json:"language" db:"language"`
-	Copyright   string      `json:"copyright" db:"copyright"`
-	Image       *Image      `json:"image" db:"image"`
-	Categories  []*Category `json:"categories" db:"categories"`
-	FeedType    string      `json:"feed_type" db:"feed_type"`
-	Articles    []*Article  `json:"articles" db:"articles"`
-}
+import "encoding/json"
 
 type SubscribeRequest struct {
 	UserID      string     `json:"user_id"`
@@ -64,10 +17,6 @@ type SubscribeRequest struct {
 	Categories  []string   `json:"categories"`
 	FeedType    string     `json:"feed_type"`
 	Articles    []*Article `json:"articles"`
-}
-
-func NewCategory(term string) Category {
-	return Category{Term: term}
 }
 
 func (s *SubscribeRequest) ToNewsfeed() Newsfeed {
@@ -140,4 +89,13 @@ func (s *SubscribeRequest) ToNewsfeed() Newsfeed {
 		FeedType: s.FeedType,
 		Articles: articles,
 	}
+}
+
+func (s *SubscribeRequest) JSON() []byte {
+	j, _ := json.MarshalIndent(s, "", "  ")
+	return j
+}
+
+func (s *SubscribeRequest) String() string {
+	return string(s.JSON())
 }

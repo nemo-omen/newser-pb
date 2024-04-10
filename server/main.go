@@ -18,6 +18,7 @@ import (
 
 var (
 	searchHandler    *handler.SearchHandler
+	subscribeHandler *handler.SubscribeHandler
 	searchService    *service.SearchService
 	subscribeService *service.SubscribeService
 )
@@ -76,6 +77,7 @@ func createUserCollections(app *pocketbase.PocketBase, user models.Model) error 
 func routes(app *pocketbase.PocketBase) {
 	app.OnBeforeServe().Add(func(e *core.ServeEvent) error {
 		e.Router.POST("/search", searchHandler.Search)
+		e.Router.POST("/subscribe", subscribeHandler.Subscribe)
 		return nil
 	})
 }
@@ -84,4 +86,5 @@ func registerHandlers(app *pocketbase.PocketBase) {
 	searchService = service.NewSearchService()
 	subscribeService = service.NewSubscribeService(app.Dao())
 	searchHandler = handler.NewSearchHandler(searchService)
+	subscribeHandler = handler.NewSubscribeHandler(subscribeService)
 }

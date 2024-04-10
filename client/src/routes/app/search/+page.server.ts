@@ -61,11 +61,52 @@ export const actions = {
 
     return { success: true, searchUrl: searchUrl, feeds: data };
   },
-  subscribe: async ({ request }) => {
+  subscribe: async ({ request, locals }) => {
     const requestData = await request.formData();
     const requestJSON = String(requestData.get('feed'));
-    const feed = await JSON.parse(requestJSON);
-    console.log({ feed });
-    return { success: true, feed };
+    const subscribeRequest = await JSON.parse(requestJSON);
+    subscribeRequest.user_id = locals.user.id;
+    let response: Response | undefined = undefined;
+    try {
+      response = await fetch(
+        `${SERVER_ADDR}/subscribe`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(subscribeRequest)
+        }
+      );
+    } catch (err) {
+      return error({
+        status: 422,
+        description: 'Failed to subscribe to feed',
+        error: err
+      });
+    }
+
+    console.log({ response });
+
+    if (!response.ok) {
+      return error({
+        status: 422,
+        description: 'Failed to subscribe to feed',
+        error: response.statusText
+      });
+    }
+
+    // let feed: unknown;
+    // try {
+    //   feed = await response.json();
+    // } catch (err) {
+    //   return error({
+    //     status: 422,
+    //     description: 'Failed to parse response from server',
+    //     error: err
+    //   });
+    // }
+    return { success: true };
+    // return { success: true, feed };
   }
 };
