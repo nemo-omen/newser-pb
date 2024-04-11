@@ -16,7 +16,7 @@ func NewSubscribeService(dao *daos.Dao) *SubscribeService {
 	return &SubscribeService{dao: dao}
 }
 
-func (s *SubscribeService) Subscribe(subscribeReq *types.SubscribeRequest) error {
+func (s *SubscribeService) Subscribe(subscribeReq *types.SubscribeRequest) (subscription *types.SubscriptionDTO, err error) {
 	userID := subscribeReq.UserID
 	requestFeed := subscribeReq.ToNewsfeed()
 	storedFeed, err := s.dao.FindFirstRecordByData("newsfeeds", "feed_link", requestFeed.FeedLink)
@@ -29,15 +29,19 @@ func (s *SubscribeService) Subscribe(subscribeReq *types.SubscribeRequest) error
 	feedID, err := s.saveNewsfeed(requestFeed)
 
 	if err != nil {
-		return fmt.Errorf("failed to save newsfeed: %w", err)
+		return nil, fmt.Errorf("failed to save newsfeed: %w", err)
 	}
-	return s.createSubscription(userID, feedID)
+	sub, err := s.createSubscription(userID, feedID)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create subscription: %w", err)
+	}
+	return sub, nil
 }
 
-func (s *SubscribeService) createSubscription(userID, feedID string) error {
+func (s *SubscribeService) createSubscription(userID, feedID string) (subscription *types.SubscriptionDTO, err error) {
 	subscriptionCollection, err := s.dao.FindCollectionByNameOrId("subscriptions")
 	if err != nil {
-		return fmt.Errorf("failed to find subscriptions collection: %w", err)
+		return nil, fmt.Errorf("failed to find subscriptions collection: %w", err)
 	}
 
 	subscriptionRecord := models.NewRecord(subscriptionCollection)
@@ -45,9 +49,14 @@ func (s *SubscribeService) createSubscription(userID, feedID string) error {
 	subscriptionRecord.Set("feed_id", feedID)
 
 	if err := s.dao.SaveRecord(subscriptionRecord); err != nil {
-		return fmt.Errorf("failed to save subscription: %w", err)
+		return nil, fmt.Errorf("failed to save subscription: %w", err)
 	}
-	return nil
+	sub := &types.SubscriptionDTO{
+		ID:     subscriptionRecord.Id,
+		UserID: subscriptionRecord.Get("user_id").(string),
+		FeedID: subscriptionRecord.Get("feed_id").(string),
+	}
+	return sub, nil
 }
 
 func (s *SubscribeService) saveNewsfeed(feed types.Newsfeed) (feedID string, err error) {

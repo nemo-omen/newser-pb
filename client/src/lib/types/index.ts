@@ -40,3 +40,11 @@ export type GoFeedPerson = {
   name: string;
   email?: string;
 };
+
+/** Newser Types **/
+
+export type Subscription = {
+  id?: string;
+  feed_id: string;
+  user_id: string;
+};

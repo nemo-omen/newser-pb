@@ -22,5 +22,9 @@ func (h *SubscribeHandler) Subscribe(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err.Error())
 	}
-	return h.service.Subscribe(&req)
+	sub, err := h.service.Subscribe(&req)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, err.Error())
+	}
+	return c.JSON(http.StatusOK, sub)
 }

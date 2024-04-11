@@ -1,6 +1,6 @@
 import { error, fail } from '@sveltejs/kit';
 import { SERVER_ADDR } from '$env/static/private';
-
+import type { Subscription } from '$lib/types/index.js';
 export const actions = {
   search: async (event) => {
     const requestData = await event.request.formData();
@@ -79,8 +79,7 @@ export const actions = {
         }
       );
     } catch (err) {
-      return error({
-        status: 422,
+      return fail(422, {
         description: 'Failed to subscribe to feed',
         error: err
       });
@@ -89,24 +88,21 @@ export const actions = {
     console.log({ response });
 
     if (!response.ok) {
-      return error({
-        status: 422,
+      return fail(422, {
         description: 'Failed to subscribe to feed',
         error: response.statusText
       });
     }
 
-    // let feed: unknown;
-    // try {
-    //   feed = await response.json();
-    // } catch (err) {
-    //   return error({
-    //     status: 422,
-    //     description: 'Failed to parse response from server',
-    //     error: err
-    //   });
-    // }
-    return { success: true };
-    // return { success: true, feed };
+    let subscription: Subscription;
+    try {
+      subscription = await response.json();
+    } catch (err) {
+      return fail(422, {
+        description: 'Failed to parse response from server',
+        error: err
+      });
+    }
+    return { success: true, subscription };
   }
 };
