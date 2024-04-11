@@ -40,6 +40,22 @@
           "maxSize": 5242880,
           "protected": false
         }
+      },
+      {
+        "system": false,
+        "id": "6lh74dsf",
+        "name": "collections",
+        "type": "relation",
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "options": {
+          "collectionId": "totoxuvv8wtosqy",
+          "cascadeDelete": false,
+          "minSelect": null,
+          "maxSelect": null,
+          "displayFields": null
+        }
       }
     ],
     "indexes": [],
@@ -59,6 +75,35 @@
       "onlyVerified": false,
       "requireEmail": false
     }
+  },
+  {
+    "id": "v54it2fzg4yor31",
+    "name": "annotations",
+    "type": "base",
+    "system": false,
+    "schema": [
+      {
+        "system": false,
+        "id": "dbxcfn30",
+        "name": "title",
+        "type": "text",
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "options": {
+          "min": 0,
+          "max": 255,
+          "pattern": ""
+        }
+      }
+    ],
+    "indexes": [],
+    "listRule": null,
+    "viewRule": null,
+    "createRule": null,
+    "updateRule": null,
+    "deleteRule": null,
+    "options": {}
   },
   {
     "id": "vvp5ozr9fg6j84w",
@@ -223,7 +268,9 @@
         }
       }
     ],
-    "indexes": [],
+    "indexes": [
+      "CREATE UNIQUE INDEX `idx_Wxr2GNM` ON `articles` (`guid`)"
+    ],
     "listRule": null,
     "viewRule": null,
     "createRule": null,
@@ -252,7 +299,9 @@
         }
       }
     ],
-    "indexes": [],
+    "indexes": [
+      "CREATE UNIQUE INDEX `idx_xmvJsMu` ON `categories` (`term`)"
+    ],
     "listRule": null,
     "viewRule": null,
     "createRule": null,
@@ -261,14 +310,28 @@
     "options": {}
   },
   {
-    "id": "holel21q7hcnpxs",
+    "id": "totoxuvv8wtosqy",
     "name": "collections",
     "type": "base",
     "system": false,
     "schema": [
       {
         "system": false,
-        "id": "avtoqbm3",
+        "id": "zzs6zem6",
+        "name": "title",
+        "type": "text",
+        "required": true,
+        "presentable": false,
+        "unique": false,
+        "options": {
+          "min": 3,
+          "max": 255,
+          "pattern": ""
+        }
+      },
+      {
+        "system": false,
+        "id": "hossi0bt",
         "name": "user",
         "type": "relation",
         "required": false,
@@ -280,20 +343,6 @@
           "minSelect": null,
           "maxSelect": 1,
           "displayFields": null
-        }
-      },
-      {
-        "system": false,
-        "id": "8rvuqqwi",
-        "name": "title",
-        "type": "text",
-        "required": true,
-        "presentable": false,
-        "unique": false,
-        "options": {
-          "min": 3,
-          "max": 255,
-          "pattern": ""
         }
       }
     ],
@@ -339,7 +388,9 @@
         }
       }
     ],
-    "indexes": [],
+    "indexes": [
+      "CREATE INDEX `idx_aCoKO8R` ON `images` (`url`)"
+    ],
     "listRule": null,
     "viewRule": null,
     "createRule": null,
@@ -542,7 +593,9 @@
         }
       }
     ],
-    "indexes": [],
+    "indexes": [
+      "CREATE UNIQUE INDEX `idx_fw4mthj` ON `newsfeeds` (`feed_link`)"
+    ],
     "listRule": null,
     "viewRule": null,
     "createRule": null,
@@ -593,14 +646,14 @@
     "options": {}
   },
   {
-    "id": "r7rlqxs8cgxwyo9",
+    "id": "jmsinhm1dahd8fd",
     "name": "subscriptions",
     "type": "base",
     "system": false,
     "schema": [
       {
         "system": false,
-        "id": "ktmsag88",
+        "id": "bhd5vccz",
         "name": "user_id",
         "type": "relation",
         "required": true,
@@ -616,8 +669,8 @@
       },
       {
         "system": false,
-        "id": "iww7q7oy",
-        "name": "feed_id",
+        "id": "0nzvz0pr",
+        "name": "newsfeed_id",
         "type": "relation",
         "required": true,
         "presentable": false,
