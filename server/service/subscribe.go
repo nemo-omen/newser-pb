@@ -35,12 +35,18 @@ func (s *SubscribeService) Subscribe(subscribeReq *types.SubscribeRequest) error
 }
 
 func (s *SubscribeService) createSubscription(userID, feedID string) error {
-	subscription := types.Subscription{
-		UserId: userID,
-		FeedId: feedID,
+	subscriptionCollection, err := s.dao.FindCollectionByNameOrId("subscriptions")
+	if err != nil {
+		return fmt.Errorf("failed to find subscriptions collection: %w", err)
 	}
-	_ = subscription
-	// _, err := s.dao.CreateRecord("subscriptions", subscription)
+
+	subscriptionRecord := models.NewRecord(subscriptionCollection)
+	subscriptionRecord.Set("user_id", userID)
+	subscriptionRecord.Set("feed_id", feedID)
+
+	if err := s.dao.SaveRecord(subscriptionRecord); err != nil {
+		return fmt.Errorf("failed to save subscription: %w", err)
+	}
 	return nil
 }
 

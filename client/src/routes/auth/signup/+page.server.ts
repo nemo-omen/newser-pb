@@ -31,16 +31,19 @@ export const actions = {
     if (!form.valid) {
       return fail(400, { form });
     }
+
     const { email, password } = form.data;
     try {
       await locals.pb?.collection('users').create(form.data);
     } catch (error) {
+      console.log("Error creating user", error);
       return fail(401, { form: message(form, 'Invalid credentials') });
     }
 
     try {
       await locals.pb?.collection('users').authWithPassword(email, password);
     } catch (error) {
+      console.log("Error logging in user", error);
       return fail(401, { form: message(form, 'Invalid credentials') });
     }
 
