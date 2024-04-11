@@ -5,7 +5,16 @@ import { SERVER_ADDR } from "$env/static/private";
 import { sequence } from "@sveltejs/kit/hooks";
 
 export const authentication: Handle = async ({ event, resolve }) => {
-  event.locals.pb = new Pocketbase(SERVER_ADDR);
+  let pb: Pocketbase;
+
+  try {
+    pb = new Pocketbase(SERVER_ADDR);
+  } catch (err) {
+    console.error("Failed to initialize Pocketbase: ", err);
+    throw new Error(`Failed to initialize Pocketbase: ${err}`);
+  }
+
+  event.locals.pb = pb;
 
   // load the store data from the request cookie string
   event.locals.pb.authStore.loadFromCookie(event.request.headers.get('cookie') || '');
