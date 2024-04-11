@@ -43,6 +43,50 @@ export type GoFeedPerson = {
 
 /** Newser Types **/
 
+export type SubscribeRequest = Newsfeed & {
+  user_id: string;
+};
+
+export type Newsfeed = {
+  title: string;
+  description: string;
+  feed_link: string;
+  site_link: string;
+  updated_at: string;
+  published_at: string;
+  authors: Person[];
+  language: string;
+  image: Image;
+  copyright: string;
+  categories: string[];
+  feed_type: string;
+  articles: Article[];
+};
+
+export type Article = {
+  title: string;
+  description: string;
+  content: string;
+  link: string;
+  site_link: string;
+  updated_at: string;
+  published_at: string;
+  guid: string;
+  image: Image;
+  categories: string[];
+  authors: Person[];
+};
+
+export type Image = {
+  url: string;
+  title: string;
+};
+
+export type Person = {
+  name: string;
+  email: string;
+};
+
 export type Subscription = {
   id?: string;
   feed_id: string;
