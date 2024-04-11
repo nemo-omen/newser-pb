@@ -5,7 +5,7 @@
 </script>
 
 <div class="stack">
-	<h3>We found {feeds.length} feeds</h3>
+	<h3>We found {feeds.length} feed{feeds.length > 1 ? 's' : ''}</h3>
 	{#if feeds.length > 0}
 		<ul class="stack card-list search-results">
 			{#each feeds as feed}

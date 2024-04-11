@@ -18,6 +18,7 @@ func NewSubscribeService(dao *daos.Dao) *SubscribeService {
 
 func (s *SubscribeService) Subscribe(subscribeReq *types.SubscribeRequest) (subscription *types.SubscriptionDTO, err error) {
 	userID := subscribeReq.UserID
+	fmt.Println("subscribeReq", subscribeReq)
 	requestFeed := subscribeReq.ToNewsfeed()
 	storedFeed, err := s.dao.FindFirstRecordByData("newsfeeds", "feed_link", requestFeed.FeedLink)
 	if err == nil {
