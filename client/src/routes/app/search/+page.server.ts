@@ -1,6 +1,7 @@
 import { error, fail } from '@sveltejs/kit';
 import { SERVER_ADDR } from '$env/static/private';
-import type { Subscription } from '$lib/types/index.js';
+import type { GoFeed, Subscription } from '$lib/types/index.js';
+import { mapGoFeedToSubscribeRequest } from '$lib/types/mapper.js';
 export const actions = {
   search: async (event) => {
     const requestData = await event.request.formData();
@@ -64,8 +65,9 @@ export const actions = {
   subscribe: async ({ request, locals }) => {
     const requestData = await request.formData();
     const requestJSON = String(requestData.get('feed'));
-    const subscribeRequest = await JSON.parse(requestJSON);
-    subscribeRequest.user_id = locals.user.id;
+    const requestFeed: GoFeed = await JSON.parse(requestJSON) as GoFeed;
+    const subscribeRequest = mapGoFeedToSubscribeRequest(requestFeed, locals.user.id);
+    console.log({ subscribeRequest });
     let response: Response | undefined = undefined;
     try {
       response = await fetch(

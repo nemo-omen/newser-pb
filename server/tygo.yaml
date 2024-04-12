@@ -1,0 +1,10 @@
+packages:
+  - path: "server/types"
+    type_mappings:
+      # output_path: "../client/lib/types/serverTypes.ts"
+      indent: "  "
+      time.Time: "string /* RFC3339 */"
+      null.String: "null | string"
+      null.Bool: "null | boolean"
+      uuid.UUID: "string /* uuid */"
+      uuid.NullUUID: "null | string /* uuid */"
